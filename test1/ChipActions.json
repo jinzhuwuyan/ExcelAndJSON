@@ -1,0 +1,366 @@
+[
+{
+	"Name":"triggerEvent",
+	"Label":"自定义事件",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"发出一个自定义事件",
+	"Desc":["发出自定义事件{msgid,MsgVar,点击选择事件}"]
+},
+
+{
+	"Name":"waitex",
+	"Label":"等待",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"等待一段时间再执行后续的动作",
+	"Desc":["等待时间{time,NumberVar,点击填写数值}s"]
+},
+
+{
+	"Name":"setActorScale",
+	"Label":"缩放",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"将指定的目标在一段时间内变换到特定大小",
+	"Desc":["将{target,EntityVar,点击选择目标}进行缩放",
+			"缩放的方式是{scaleType,EnumVar,整体缩放|任意缩放}",
+			"缩放的大小是{scalex,NumberVar,x} {scaley,NumberVar,y} {scalez,NumberVar,z}",
+			"缩放全程需要时间为{time,NumberVar,点击填写数值}s"
+			]
+},
+
+{
+	"Name":"actorMoveTo",
+	"Label":"位移",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"将指定目标在一段时间内移动到指定位置。移动过程中保持碰撞检测和地形检测",
+	"Desc":["将{target,EntityVar}进行位移",
+			"位移中播放的动画是{action,AnimationVar,点击选择动画}",
+			"移动到的位置是{pos,PositionVar,点击填写位置}",
+			"移动方式为{moveType,EnumVar,按速度|按时间,4|5}",
+			"移动全程需要时间为{time,NumberVar,点击填写数值}s",
+			"移动速度为{speed,NumberVar,点击填写数值}m/s",
+			"移动过程中受到阻挡时{block,EnumVar,继续移动|停止移动|寻路移动}",
+			"移动过程中的朝向是{faceDir,EnumVar,保持原来的朝向|面向目的地}"
+			]
+},
+
+{
+	"Name":"actorRotate",
+	"Label":"转向固定角度",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"将指定目标在一段时间内绕某个轴进行旋转",
+	"Desc":["将{target,EntityVar,点击选择目标}围绕{axis,AxisVar,点击选择}轴进行旋转",
+			"转向的方式{rot,EnumVar,到达指定方向|经过固定角度}",
+			"旋转角度为{angle,DegreeNumberVar,点击填写角度}度",
+			"旋转的方向是{rotdir,EnumVar,顺时针方向|逆时针方向}",
+			"旋转全程需要时间为{time,NumberVar,点击填写数值}s"]
+},
+
+{
+	"Name":"actorAutoRotate",
+	"Label":"持续旋转",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"将指定目标绕某个轴一直旋转",
+	"Desc":["将{target,EntityVar,点击选择目标}围绕{axis,AxisVar,点击选择}轴进行旋转",
+			"旋转的方向是{rotdir,EnumVar,顺时针方向|逆时针方向}",
+			"旋转的角速度是{rot,NumberVar,点击填写数值}"]
+},
+
+{
+	"Name":"setActorState",
+	"Label":"进入指定状态",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"令指定目标进入某个状态",
+	"Desc":["{target,EntityVar,点击选择目标}进入指定状态",
+			"进入的状态是{state,EntityStateVar,点击选择状态}"]
+},
+
+{
+	"Name":"createActor",
+	"Label":"创建一个实体",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"在游戏世界的指定位置创建一个实体",
+	"Desc":["创建的实体是{target,EntityVar,点击选择目标}",
+			"创建的位置{pos,PositionVar,点击填写位置}",
+			"创建的朝向{dir,DirectionVar,点击填写角度}"]
+},
+
+{
+	"Name":"setPlayerControlActor",
+	"Label":"玩家获取控制权",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"将玩家和指定的实体进行绑定，使玩家可以控制这个实体",
+	"Desc":["获得控制权的玩家{player,PlayerVar,点击选择玩家}","控制的对象是{target,EntityVar,点击选择目标}"]
+},
+
+{
+	"Name":"actorStopRot",
+	"Label":"停止旋转",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"一个指定目标因其他指令造成的旋转会被停止。目标自身通过摇杆或者一些特殊操作造成旋转，不在这个指令的停止范围。",
+	"Desc":["停止芯片对{target,EntityVar,点击选择目标}造成的旋转"]
+},
+{
+	"Name":"actorStopMove",
+	"Label":"停止位移",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"一个指定目标因其他指令造成的位移会被停止。目标自身通过摇杆或者一些特殊操作造成位移，不在这个指令的停止范围。",
+	"Desc":["停止芯片对{target,EntityVar,点击选择目标}造成的位移"]
+},
+{
+	"Name":"actorStopScale",
+	"Label":"停止缩放",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"一个指定目标因其他指令造成的缩放会被停止。目标自身通过摇杆或者一些特殊操作造成缩放，不在这个指令的停止范围。",
+	"Desc":["停止芯片对{target,EntityVar,点击选择目标}造成的缩放"]
+},
+{
+	"Name":"actorJumpBySpeed",
+	"Label":"向上移动",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"使一个指定目标获得向上的速度。",
+	"Desc":["获得速度的目标是{target,EntityVar,点击选择目标}",
+	        "向上的速度大小是{speed,NumberVar,点击填写速度}"]
+},
+{
+	"Name":"setActorVisible1",
+	"Alias":"setActorVisible",
+	"Label":"显示模型",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"显示一个指定实体的模型。",
+	"Desc":["显示模型的实体是{target,EntityVar,点击选择目标}{visible,ConstVar,1}"]
+},
+{
+	"Name":"setActorVisible2",
+	"Alias":"setActorVisible",
+	"Label":"隐藏模型",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"隐藏一个指定实体的模型。",
+	"Desc":["隐藏模型的实体是{target,EntityVar,点击选择目标}{visible,ConstVar,0}"]
+},
+{
+	"Name":"destoryActor",
+	"Label":"销毁角色",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"将一个实体从游戏世界中删除。",
+	"Desc":["销毁的目标是{target,EntityVar,点击选择目标}"]
+},
+{
+	"Name":"actorChangeSuit",
+	"Label":"角色穿戴时装",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"给目标角色穿上指定的时装，若指定的目标不能穿戴该时装，则不发生任何事。",
+	"Desc":["穿上时装的实体是{target,EntityVar,点击选择目标}",
+			"穿上的时装是{suit,NumberVar,点击填写时装ID}"]
+},
+
+{
+	"Name":"actorPlayAction",
+	"Label":"实体播放动作",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"令指定的实体播放动作，如果该实体没有相应动作，则不发生任何事。",
+	"Desc":["播放动作的实体是{target,EntityVar,点击选择目标}",
+			"播放的动作是{action,AnimationVar,点击选择动画}"]
+},
+
+{
+	"Name":"interactionActorState",
+	"Label":"实体交互之设置状态",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"令实体执行交互效果，如果该实体没有交互效果，则不发生任何事。",
+	"Desc":["实体{target,EntityVar,点击选择目标}",
+			"进入的状态是{state,EntityStateVar,点击选择状态}"]
+},
+
+{
+	"Name":"throwActor",
+	"Label":"投射物体",
+	"Type":301,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"投射物体。",
+	"Desc":["投射{target,EntityVar,点击选择目标}",
+			"以{speed,NumberVar,点击选择数值}速度扔出"]
+},
+
+{
+	"Name":"openUI",
+	"Label":"显示UI",
+	"Type":304,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"显示UI。",
+	"Desc":["显示UI是{ui_name,StringConstVar,点击选择UI}"]
+},
+
+{
+	"Name":"closeUI",
+	"Label":"关闭UI",
+	"Type":305,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"关闭UI。",
+	"Desc":["关闭UI{ui_name,StringConstVar,点击选择UI}"]
+},
+
+{
+	"Name":"actorRelive",
+	"Label":"角色重生",
+	"Type":306,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"令角色在某个位置重生。",
+	"Desc":["重生的实体是{target,EntityVar,点击选择目标}",
+		"重生的位置{pos,PositionVar,点击填写位置}",
+		"重生的朝向{dir,DirectionVar,点击填写角度}"]
+},
+
+{
+	"Name":"hideTip",
+	"Label":"隐藏提示",
+	"Type":307,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"UI隐藏提示",
+	"Desc":["UI提示类型是{tip,NumberVar,点击选择目标}"]
+},
+
+{
+	"Name":"showTip",
+	"Label":"显示提示",
+	"Type":308,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"UI显示提示",
+	"Desc":["UI提示类型是{tip,EnumVar,左下提示|中间提示|顶部提示}",
+			"显示文本是{content,StringConstVar,点击选择文本}"]
+},
+
+{
+	"Name":"showActorSubMesh1",
+	"Alias":"showActorSubMesh",
+	"Label":"显示actor的子模型",
+	"Type":309,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"显示actor的子模型",
+	"Desc":["{show,ConstVar,1}显示{target,EntityVar,点击选择目标}",
+			"子模型为{mesh,StringConstVar,点击选择模型名}"]
+},
+{
+	"Name":"generateRoleAction",
+	"Label":"创建角色",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"创建角色",
+	"Desc":["{target|count|camp,EntityVar|NumberVar|CampVar,选择生成的对象|生成|数量|阵营为,GenerateEntityVarGroup}",
+		"{pos|scopeClass|scope1|scope2,PositionVar|EnumVar|NumberVar|StringConstVar,选择位置|选择位置|Role,PosScopeVarGroup}"]
+},
+{
+	"Name":"generateItemAction",
+	"Label":"创建道具",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"创建道具",
+	"Desc":["{target|count,EntityVar|NumberVar,选择生成的对象|生成|数量|Item,GenerateEntityVarGroup}",
+		"{pos|scopeClass|scope1|scope2,PositionVar|EnumVar|NumberVar|StringConstVar,选择位置|选择位置|Item,PosScopeVarGroup}"]
+},
+{
+	"Name":"changeActorAttr",
+	"Label":"修改角色属性值",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"修改角色属性值",
+	"Desc":["{target|attr_value,EntityVar|PropertyVar,选择修改的属性|修改|的|属性|选择属性,PropertyModifyVarGroup}",
+		"{op|val,EnumVar|NumberVar,选择修改方式,PropertyChangerVarGroup}"]
+},
+{
+	"Name":"changeActorCamp",
+	"Label":"修改角色阵营",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"修改角色阵营",
+	"Desc":["{target|target_camp,EntityVar|CampVar,选择修改的对象|设置|的阵营为|Camp,GenerateEntityVarGroup}"]
+},
+{
+	"Name":"charactorGotItem",
+	"Label":"添加道具到角色背包",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"添加道具到角色背包",
+	"Desc":["{target|num|item,EntityVar|NumberVar|EntityVar,选择修改的角色和道具|往|的背包中添加|个,ChangeBgItem}"]
+},
+{
+	"Name":"charactorCostItem",
+	"Label":"从角色背包减少道具",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"从角色背包减少道具",
+	"Desc":["{target|num|item,EntityVar|NumberVar|EntityVar,选择修改的角色和道具|从|的背包中减少|个,ChangeBgItem}"]
+},
+{
+	"Name":"actorRelive",
+	"Label":"复活角色",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"复活角色",
+	"Desc":["将{target,EntityVar}复活",
+		"{pos|scopeClass|scope1|scope2,PositionVar|EnumVar|NumberVar|StringConstVar,选择位置|选择位置|Role,PosScopeVarGroup}"]
+},
+{
+	"Name":"changeActorVal",
+	"Label":"赋予数值",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"赋予数值",
+	"Desc":["{variable1|variable2|op|variable3,NumberVar|NumberVar|OperatorVar|NumberVar,数值运算|=|选择运算符,AssignmentVarGroup}"]
+},
+{
+	"Name":"showActorSubMesh2",
+	"Alias":"showActorSubMesh",
+	"Label":"隐藏actor的子模型",
+	"Type":309,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"隐藏actor的子模型",
+	"Desc":["{show,ConstVar,0}隐藏{target,EntityVar,点击选择目标}",
+			"子模型为{mesh,StringConstVar,点击选择模型}"]
+},
+{
+	"Name":"showTextAction",
+	"Label":"显示文字信息动作指令",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"显示文字信息动作指令",
+	"Desc":["显示信息的类型{messageType,EnumVar,顶部消息|左下角消息|全屏消息}",
+			"显示内容{content,RichTextVar}",
+			"显示持续时间{time,NumberVar}",
+			"文本出现效果{textShowType,EnumVar,瞬间出现|慢|匀速|快}"]
+},
+{
+	"Name":"hideTextAction",
+	"Label":"隐藏文字信息动作指令",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"隐藏文字信息动作指令",
+	"Desc":["隐藏的信息的类型（多选）{hideTextType,MultiSelectVar,所有顶部消息|所有左下角消息|所有全屏消息|所有冒泡信息}"]
+},
+{
+	"Name":"setBoolProperty",
+	"Label":"设置开关状态",
+	"Type":1,
+	"Icon":"instr_action_ic_01.png",
+	"Tip":"设置开关状态",
+	"Desc":["设置{target,EntityVar,选择对象,2}的开关{key,BoolPropertyName,选择开关,target}状态为{val,BoolVar}"]
+}
+]

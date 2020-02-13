@@ -6,9 +6,11 @@ __email__ = 'gdgoldlion@gmail.com'
 import xlrd
 import json
 import math
+import xlwt
 
 from xlrd import XL_CELL_EMPTY, XL_CELL_TEXT, XL_CELL_NUMBER, XL_CELL_DATE, XL_CELL_BOOLEAN, XL_CELL_ERROR, \
     XL_CELL_BLANK
+
 
 import SheetManager
 
@@ -27,7 +29,7 @@ class Field:
         return "name:%r,type:%r,default:%r,folding:%r" % (self.name, self.type, self.default, self.folding)
 
 class Sheet:
-    def __init__(self, sh):
+    def __init__(self, sh, json_Data = None):
         self.sh = sh
         self.name = sh.name
         #是否完全初始化完毕（最后一个步骤是插入表的引用）
@@ -39,6 +41,17 @@ class Sheet:
         #解析的数据
         self.python_obj = {}
 
+        if(json_Data != None):
+            py_data = json.loads(json_Data)
+            if(isinstance(py_data, dict)):
+                self.python_obj = py_data
+            elif(isinstance(py_data, list)):
+                for idx, i in enumerate(py_data):
+                    self.python_obj[idx + 1] = i
+            else:
+                pass
+
+    def LoadFromSheet(self):
         self.__findRow()
         self.__findCol()
 
@@ -47,6 +60,12 @@ class Sheet:
 
         self.__convertPython()
         self.__executeFolding()
+
+    def SaveToExcel(self):
+        self.__generateRow();
+        self.__generateCol();
+        self.__generateField();
+        self.__convertExcel();
 
     #查找数据起始行数，格式行，缺省值行，类型行，数据终止行数
     def __findRow(self):
@@ -75,6 +94,32 @@ class Sheet:
         if row == self.sh.nrows - 1:
             self.dataEndRow = self.sh.nrows
 
+    def __generateRow(self):
+        self.defaultRow = 0;
+        self.foldingRow = 1;
+        self.typeRow = 2;
+        self.nameRow = 3;
+        self.dataStartRow = 4;
+        self.dataEndRow = self.python_obj.keys().__len__();
+
+
+    def __generateCol(self):
+        self.keyNameSet = set();
+        for v in self.python_obj.values():
+            if(isinstance(v, dict)):
+                if(self.keyNameSet.__len__() == 0):
+                    self.keyNameSet = set(v.keys())
+                else:
+                    for keyName in v.keys():
+                        self.keyNameSet.add(keyName);
+            elif (isinstance(v, list)):
+                for value in v:
+                    if(isinstance(value, dict)):
+                        for kName in value.keys():
+                            self.keyNameSet.add(kName)
+
+        self.dataEndCol = self.keyNameSet.__len__() + 1;       
+
     #查找数据终止列数
     def __findCol(self):
         #遍历查找，如果在excel中存在多余的注释，列数为第一个空字符串出现的单元格下标#
@@ -87,6 +132,31 @@ class Sheet:
         if col == self.sh.ncols - 1:
             self.dataEndCol = self.sh.ncols
 
+    def __generateField(self):
+        keyNameSet = list(self.keyNameSet)
+        type_mapping_dict = {int: 'i', float: 'f', dict: 'd', list: 'l', str: 's', bool: 'b'}
+        default_mapping_dict = {int: 0, float: 0, dict: None, list: None, str: '', bool: False}
+        for col in range(self.dataEndCol):
+            field = Field()
+            self.fieldList.append(field)
+            if col == 0:
+                continue
+            for v in self.python_obj.values():
+                if(isinstance(v, dict)):
+                    if(v.has_key(keyNameSet[col - 1])):
+                        field.type = type_mapping_dict.get(type(v[keyNameSet[col - 1]]), "s");
+                        field.name = keyNameSet[col - 1];
+                        field.default = default_mapping_dict.get(type(v[keyNameSet[col - 1]]), None);
+
+                    
+                elif (isinstance(v, list)):
+                    for value in v:
+                        if(isinstance(value, dict)):
+                            field.type = type_mapping_dict.get(type(v[keyNameSet[col - 1]]), "s");
+                            field.name = keyNameSet[col - 1];
+                            field.default = default_mapping_dict.get(type(v[keyNameSet[col - 1]]), None);
+            
+        
     #解析字段属性
     def __parseField(self):
 
@@ -209,6 +279,89 @@ class Sheet:
             #TODO 并不支持小数做主键
 
         return recordId
+
+    def __convertExcel(self):
+
+
+        if(isinstance(self.sh, xlwt.Worksheet)):
+
+            python_keys = self.python_obj.keys()
+            for row in range(0, self.dataEndRow):
+                for col in range(0, self.dataEndCol):
+                    field = self.fieldList[col]
+                    if row == self.defaultRow:
+                        if(col == 0):
+                            self.sh.write(row, col, "__default__")
+                        else:
+                            value = field.default
+                            if(value == None):
+                                value = "null"
+                            self.sh.write(row, col, value);
+                        continue
+                    elif row == self.foldingRow:
+                        if(col == 0):
+                            self.sh.write(row, col, "__folding__")
+                        else:
+                            self.sh.write(row, col, "");
+                        continue;
+                    elif row == self.typeRow:
+                        if col == 0:
+                            self.sh.write(row, col, "__type__");
+                        else:
+                            self.sh.write(row, col, field.type);
+                        continue
+                    elif row == self.nameRow:
+                        if col == 0:
+                            self.sh.write(row, col, "__name__")
+                        else:
+                            self.sh.write(row, col, field.name)
+                    else:
+                        rowName = python_keys[row - self.dataStartRow]
+                        cellData = self.python_obj[rowName]
+                        if(isinstance(cellData, dict)):
+                            if(cellData.has_key(field.name)):
+                                data = cellData[field.name]
+                                if(isinstance(data, list)):
+
+                                    try:
+                                        data = "["
+                                        data += ", ".join(data)
+                                        data += "]"
+                                    except:
+                                        data = str(data)
+                                elif(isinstance(data, dict)):
+                                    tmp = "{"
+                                    for k, v in data.items():
+                                        tmp += "%s:%s" % (k, v)
+                                    tmp += "}"
+                                    data = tmp
+                                self.sh.write(row, col, data);
+                            else:
+                                self.sh.write(row, col, field.default);
+                        else:
+                            bFind = False;
+                            if(isinstance(cellData, list)):
+                                for cellObj in cellData:
+                                    if(isinstance(cellData, dict) and cellObj.has_key(field.name)):
+                                        data = cellData[field.name]
+                                        if(isinstance(data, list)):
+                                            try:
+                                                data = ", ".join(data)
+                                            except:
+                                                data = str(data)
+                                        elif(isinstance(data, dict)):
+                                            tmp = ""
+                                            for k, v in data.items():
+                                                tmp += "%s:%s" % (k, v)
+                                            data = tmp
+                                        self.sh.write(row, col, data);
+                                        bFind = True
+                                        break
+                            if(bFind == False):
+                                self.sh.write(row, col, field.default);
+                    
+                    
+                    
 
     #解析自身数据为python，并折叠。不包括引用数据。
     def __convertPython(self):
@@ -423,4 +576,6 @@ class Sheet:
         return json_obj
 
 def openSheet(sh):
-    return Sheet(sh)
+    sheet = Sheet(sh)
+    sheet.LoadFromSheet()
+    return sheet
