@@ -40,6 +40,7 @@ class Sheet:
         self.referenceSheets = set()
         #解析的数据
         self.python_obj = {}
+        self.python_list = []
 
         if(json_Data != None):
             py_data = json.loads(json_Data)
@@ -90,7 +91,7 @@ class Sheet:
             if self.sh.cell(row, 0).ctype == XL_CELL_EMPTY:
                 self.dataEndRow = row
                 break
-
+        self.dataEndListRow = self.sh.nrows;
         if row == self.sh.nrows - 1:
             self.dataEndRow = self.sh.nrows
 
@@ -366,10 +367,11 @@ class Sheet:
     #解析自身数据为python，并折叠。不包括引用数据。
     def __convertPython(self):
         #dump数据#
-        for row in range(self.dataStartRow, self.dataEndRow):
+        row = self.dataEndRow if self.dataStartRow != self.dataEndRow else self.dataEndListRow
+        for row in range(self.dataStartRow, row):
             recordId = self.__getRecordId(row)
-            record = self.python_obj[recordId] = {}
-
+            record = self.python_obj[recordId] = {}      
+            
             for col in range(1, self.dataEndCol):
                 field = self.fieldList[col]
 
@@ -402,6 +404,7 @@ class Sheet:
                         record[fieldName] = self.__convertStrToDict(value)
                     elif fieldType == 'r':  #引用，保存引用字符串，以备插入引用表
                         record[fieldName] = value
+            self.python_list.append(record)
 
     def __autoDecideType(self,value):
         if isinstance(value,float):
@@ -471,7 +474,9 @@ class Sheet:
             for row in range(self.dataStartRow, self.dataEndRow):
                 #取记录
                 recordId = self.__getRecordId(row)
+             
                 record = self.python_obj[recordId]
+                
 
                 #生成新对象
                 if foldingType == "brace":
@@ -525,10 +530,13 @@ class Sheet:
         if not self.inited:
             self.__mergePython()
             self.inited = True
-
+        
         #选择性输出
         if sheet_output_field == []:
-            return self.python_obj
+            if(filter(lambda x : x != "", self.python_obj.keys()).__len__() > 0):
+                return self.python_obj
+            else:
+                return self.python_list
         else:
             new_python_obj = self.python_obj.copy()
             for recordId in new_python_obj:

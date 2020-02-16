@@ -1,0 +1,274 @@
+[
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "自定义事件", 
+    "Name": "triggerEvent", 
+    "Tip": "发出一个自定义事件", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "等待", 
+    "Name": "waitex", 
+    "Tip": "等待一段时间再执行后续的动作", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "缩放", 
+    "Name": "setActorScale", 
+    "Tip": "将指定的目标在一段时间内变换到特定大小", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "位移", 
+    "Name": "actorMoveTo", 
+    "Tip": "将指定目标在一段时间内移动到指定位置。移动过程中保持碰撞检测和地形检测", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "转向固定角度", 
+    "Name": "actorRotate", 
+    "Tip": "将指定目标在一段时间内绕某个轴进行旋转", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "持续旋转", 
+    "Name": "actorAutoRotate", 
+    "Tip": "将指定目标绕某个轴一直旋转", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "进入指定状态", 
+    "Name": "setActorState", 
+    "Tip": "令指定目标进入某个状态", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "创建一个实体", 
+    "Name": "createActor", 
+    "Tip": "在游戏世界的指定位置创建一个实体", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "玩家获取控制权", 
+    "Name": "setPlayerControlActor", 
+    "Tip": "将玩家和指定的实体进行绑定，使玩家可以控制这个实体", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "停止旋转", 
+    "Name": "actorStopRot", 
+    "Tip": "一个指定目标因其他指令造成的旋转会被停止。目标自身通过摇杆或者一些特殊操作造成旋转，不在这个指令的停止范围。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "停止位移", 
+    "Name": "actorStopMove", 
+    "Tip": "一个指定目标因其他指令造成的位移会被停止。目标自身通过摇杆或者一些特殊操作造成位移，不在这个指令的停止范围。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "停止缩放", 
+    "Name": "actorStopScale", 
+    "Tip": "一个指定目标因其他指令造成的缩放会被停止。目标自身通过摇杆或者一些特殊操作造成缩放，不在这个指令的停止范围。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "向上移动", 
+    "Name": "actorJumpBySpeed", 
+    "Tip": "使一个指定目标获得向上的速度。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": "setActorVisible", 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "显示模型", 
+    "Name": "setActorVisible1", 
+    "Tip": "显示一个指定实体的模型。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": "setActorVisible", 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "隐藏模型", 
+    "Name": "setActorVisible2", 
+    "Tip": "隐藏一个指定实体的模型。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "销毁角色", 
+    "Name": "destoryActor", 
+    "Tip": "将一个实体从游戏世界中删除。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "角色穿戴时装", 
+    "Name": "actorChangeSuit", 
+    "Tip": "给目标角色穿上指定的时装，若指定的目标不能穿戴该时装，则不发生任何事。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "实体播放动作", 
+    "Name": "actorPlayAction", 
+    "Tip": "令指定的实体播放动作，如果该实体没有相应动作，则不发生任何事。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "实体交互之设置状态", 
+    "Name": "interactionActorState", 
+    "Tip": "令实体执行交互效果，如果该实体没有交互效果，则不发生任何事。", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "投射物体", 
+    "Name": "throwActor", 
+    "Tip": "投射物体。", 
+    "Type": 301
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "显示UI", 
+    "Name": "openUI", 
+    "Tip": "显示UI。", 
+    "Type": 304
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "关闭UI", 
+    "Name": "closeUI", 
+    "Tip": "关闭UI。", 
+    "Type": 305
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "角色重生", 
+    "Name": "actorRelive", 
+    "Tip": "令角色在某个位置重生。", 
+    "Type": 306
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "隐藏提示", 
+    "Name": "hideTip", 
+    "Tip": "UI隐藏提示", 
+    "Type": 307
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "显示提示", 
+    "Name": "showTip", 
+    "Tip": "UI显示提示", 
+    "Type": 308
+  }, 
+  {
+    "Alias": "showActorSubMesh", 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "显示actor的子模型", 
+    "Name": "showActorSubMesh1", 
+    "Tip": "显示actor的子模型", 
+    "Type": 309
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "创建角色", 
+    "Name": "generateRoleAction", 
+    "Tip": "创建角色", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "创建道具", 
+    "Name": "generateItemAction", 
+    "Tip": "创建道具", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "修改角色属性值", 
+    "Name": "changeActorAttr", 
+    "Tip": "修改角色属性值", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "修改角色阵营", 
+    "Name": "changeActorCamp", 
+    "Tip": "修改角色阵营", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "添加道具到角色背包", 
+    "Name": "charactorGotItem", 
+    "Tip": "添加道具到角色背包", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "从角色背包减少道具", 
+    "Name": "charactorCostItem", 
+    "Tip": "从角色背包减少道具", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "复活角色", 
+    "Name": "actorRelive", 
+    "Tip": "复活角色", 
+    "Type": 1
+  }, 
+  {
+    "Alias": null, 
+    "Icon": "instr_action_ic_01.png", 
+    "Label": "赋予数值", 
+    "Name": "changeActorVal", 
+    "Tip": "赋予数值", 
+    "Type": 1
+  }
+]
