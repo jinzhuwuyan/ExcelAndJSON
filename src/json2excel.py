@@ -12,7 +12,7 @@ if __name__ == "__main__":
 					
 					jsonPath = os.path.abspath(name)
 					SheetManager.addJson(jsonPath)
-					excelPath = jsonPath.replace("json", "xls")
+					excelPath = jsonPath.replace("json", "xlsx")
 					SheetManager.saveWorkBook(excelPath)
 				
 
