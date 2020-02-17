@@ -3,6 +3,7 @@ __author__ = 'goldlion'
 __qq__ = 233424570
 __email__ = 'gdgoldlion@gmail.com'
 
+import sys
 import xlrd
 import json
 import math
@@ -13,6 +14,8 @@ from xlrd import XL_CELL_EMPTY, XL_CELL_TEXT, XL_CELL_NUMBER, XL_CELL_DATE, XL_C
 
 
 import SheetManager
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class Field:
     def __init__(self):
@@ -142,6 +145,7 @@ class Sheet:
             self.fieldList.append(field)
             if col == 0:
                 continue
+            
             for v in self.python_obj.values():
                 if(isinstance(v, dict)):
                     if(v.has_key(keyNameSet[col - 1])):
@@ -193,7 +197,7 @@ class Sheet:
                     field.default = value
                 elif type == 'b':
                     field.default = bool(value)
-                elif type == 'as' or type == 'ai' or type == 'af':  #数组
+                elif type == 'as' or type == 'ai' or type == 'af' or type == "l":  #数组
                     field.default = self.__convertStrToList(value, type)
                 elif type == 'd':  #字典
                     field.default = self.__convertStrToDict(value)
@@ -224,18 +228,28 @@ class Sheet:
                     self.referenceSheets.add(sheetName)
 
     #转换字符串为list
-    def __convertStrToList(self, str, typeStr):
-        type = typeStr[1]
-        list = str.split(',')
-        for i in range(len(list)):
-            if type == 's':
-                list[i] = list[i]
-            elif type == 'i':
-                list[i] = int(list[i])
-            elif type == 'f':
-                list[i] = float(list[i])
+    def __convertStrToList(self, covertstr, typeStr):
+        str_list = covertstr.split(',')
+        if(typeStr == "l"):
+            for idx, value in enumerate(str_list):
+                if value.isdigit() and '.' in value:
+                    str_list[idx] = float(value)
+                elif value.isdigit():
+                    str_list[idx] = int(value)
+                else:
+                    str_list[idx] = str(value)
+        else:
+            strtype = typeStr[1]
+            str_list = covertstr.split(',')
+            for i in range(len(str_list)):
+                if strtype == 's':
+                    str_list[i] = str_list[i]
+                elif strtype == 'i':
+                    str_list[i] = int(str_list[i])
+                elif strtype == 'f':
+                    str_list[i] = float(str_list[i])
 
-        return list
+        return str_list
 
     #转换字符串为dict
     def __convertStrToDict(self, str):
@@ -317,24 +331,30 @@ class Sheet:
                         else:
                             self.sh.write(row, col, field.name)
                     else:
+                       
+        
+        
+                            
                         rowName = python_keys[row - self.dataStartRow]
                         cellData = self.python_obj[rowName]
+                        if(self.python_obj.keys().__len__() == 0 
+                            or (self.python_obj.keys().__len__() == 1 and self.python_obj.keys()[0] == "")):
+                            if(row < self.python_list.__len__()):
+                                cellData = self.python_list[row];
                         if(isinstance(cellData, dict)):
                             if(cellData.has_key(field.name)):
                                 data = cellData[field.name]
+                                tmp = ""
                                 if(isinstance(data, list)):
-
                                     try:
-                                        data = "["
-                                        data += ", ".join(data)
-                                        data += "]"
+                                        tmp += ",".join([str(i) for i in data])
+                                        data = tmp
                                     except:
-                                        data = str(data)
+                                        data = str(data).replace("[", "").replace("]", "")
+                                        data.encode("utf-8")
                                 elif(isinstance(data, dict)):
-                                    tmp = "{"
                                     for k, v in data.items():
-                                        tmp += "%s:%s" % (k, v)
-                                    tmp += "}"
+                                        tmp += "%s:%s," % (k, v)
                                     data = tmp
                                 self.sh.write(row, col, data);
                             else:
@@ -345,15 +365,18 @@ class Sheet:
                                 for cellObj in cellData:
                                     if(isinstance(cellData, dict) and cellObj.has_key(field.name)):
                                         data = cellData[field.name]
+                                        tmp = ""
                                         if(isinstance(data, list)):
+
                                             try:
-                                                data = ", ".join(data)
+                                                tmp += ",".join([str(i) for i in data])
+                                                data = tmp
                                             except:
-                                                data = str(data)
+                                                data = str(data).replace("[", "").replace("]", "")
+                                                data.encode("utf-8")
                                         elif(isinstance(data, dict)):
-                                            tmp = ""
                                             for k, v in data.items():
-                                                tmp += "%s:%s" % (k, v)
+                                                tmp += "%s:%s," % (k, v)
                                             data = tmp
                                         self.sh.write(row, col, data);
                                         bFind = True
@@ -382,9 +405,11 @@ class Sheet:
                 ctype = self.sh.cell(row, col).ctype
 
                 if ctype == XL_CELL_EMPTY:  #如果是空的，就填入缺省值
-                    record[fieldName] = field.default
+                    if(field.default != None):
+                        record[fieldName] = field.default
                 elif value == 'null': #null为保留字
-                    record[fieldName] = None
+                    # record[fieldName] = None
+                    pass
                 else:
                     #如果没有类型字段，就自动判断类型，只支持i、f、s
                     if fieldType == '' or fieldType == None:
@@ -398,7 +423,7 @@ class Sheet:
                         record[fieldName] = value
                     elif fieldType == 'b':
                         record[fieldName] = bool(value)
-                    elif fieldType == 'as' or fieldType == 'ai' or fieldType == 'af':
+                    elif fieldType == 'as' or fieldType == 'ai' or fieldType == 'af' or fieldType == "l":
                         record[fieldName] = self.__convertStrToList(value, fieldType)
                     elif fieldType == 'd':
                         record[fieldName] = self.__convertStrToDict(value)

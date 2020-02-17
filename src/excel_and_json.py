@@ -39,7 +39,7 @@ def singlebook():
             continue
 
         sheetJSON = SheetManager.exportJSON(sheet_name)
-
+        sheet_name = sheet_name.replace(".json", "")
         f = file(output_path+sheet_name+'.json', 'w')
         f.write(sheetJSON.encode('UTF-8'))
         f.close()
