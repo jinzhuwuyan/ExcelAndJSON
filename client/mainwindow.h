@@ -1,23 +1,23 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include "ui_mainwindow.h"
 
 namespace Ui {
-class MainWindow;
+	class TableToolsWindow : public MainWindow
+	{
+		Q_OBJECT
+
+	public:
+		explicit TableToolsWindow(QWidget *parent = 0);
+		~TableToolsWindow();
+
+	private:
+		Ui::MainWindow *ui;
+
+	};
 }
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
 
-public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
-
-private:
-    Ui::MainWindow *ui;
-    
-};
 
 #endif // MAINWINDOW_H

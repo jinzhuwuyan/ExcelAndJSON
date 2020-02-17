@@ -1,14 +1,27 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+namespace Ui
 {
-    ui->setupUi(this);
+	TableToolsWindow* tableInstance = nullptr;
+
+	TableToolsWindow* GetSingleton()
+	{
+		if (tableInstance == nullptr)
+		{
+			tableInstance = new TableToolsWindow(nullptr);
+		}
+		return tableInstance;
+	}
+
+	TableToolsWindow::TableToolsWindow(QWidget *parent /*= 0*/) : MainWindow()
+	{
+
+	}
+
+	TableToolsWindow::~TableToolsWindow()
+	{
+
+	}
+
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
