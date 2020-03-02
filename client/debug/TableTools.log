@@ -1,0 +1,7 @@
+﻿  MOC mainwindow.h
+  UIC mainwindow.ui
+  main.cpp
+  mainwindow.cpp
+  moc_mainwindow.cpp
+  正在生成代码...
+  TableTools.vcxproj -> C:\Users\Administrator\Desktop\ExcelAndJSON\client\debug\TableTools.exe

@@ -29,7 +29,7 @@ def singlebook():
     elif not "output_path" in locals().keys():
         # usage()
         sys.exit()
-
+    print file_path
     SheetManager.addWorkBook(file_path)
     sheetNameList = SheetManager.getSheetNameList()
 

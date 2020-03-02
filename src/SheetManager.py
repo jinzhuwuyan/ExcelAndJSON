@@ -22,15 +22,22 @@ def saveWorkBook(filepath):
     wb.save(filepath)
         
         
-
-        
+def clearJson():
+    global sheetNameList
+    global sheetJsonDict
+    sheetNameList = []
+    sheetJsonDict = {}
 
 def addWorkBook(filepath):
     wb = xlrd.open_workbook(filepath)
     for sheet_index in range(wb.nsheets):
-        sh = wb.sheet_by_index(sheet_index)
-        sheet = Sheet.openSheet(sh)
-        addSheet(sheet)
+        try:
+            sh = wb.sheet_by_index(sheet_index)
+            sheet = Sheet.openSheet(sh)
+            addSheet(sheet)
+        except:
+            continue
+        
 
 def addSheet(sheet):
     sheetDict[sheet.name] = sheet

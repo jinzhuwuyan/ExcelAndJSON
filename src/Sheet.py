@@ -45,6 +45,8 @@ class Sheet:
         self.python_obj = {}
         self.python_list = []
 
+        self.conver_mode = "default"
+
         if(json_Data != None):
             py_data = json.loads(json_Data)
             if(isinstance(py_data, dict)):
@@ -56,6 +58,8 @@ class Sheet:
                 pass
 
     def LoadFromSheet(self):
+        self.__checkConfig()
+        print "进入Row"
         self.__findRow()
         self.__findCol()
 
@@ -65,7 +69,14 @@ class Sheet:
         self.__convertPython()
         self.__executeFolding()
 
+    def __checkConfig(self):
+        pass
+    
+    def __saveConfig(self, config_list):
+        pass
+
     def SaveToExcel(self):
+        
         self.__generateRow();
         self.__generateCol();
         self.__generateField();
@@ -76,8 +87,9 @@ class Sheet:
         self.defaultRow = -1
         self.foldingRow = -1
 
-        for i in range(0, 5):
+        for i in range(0, 6):
             value = self.sh.cell(i, 0).value
+            print value
             if value == '__default__':
                 self.defaultRow = i
             elif value == '__folding__':
@@ -86,10 +98,12 @@ class Sheet:
                 self.typeRow = i
             elif value == '__name__':
                 self.nameRow = i
+            elif value == "__rename__":
+                self.renameRow = i
             else:
                 self.dataStartRow = i
                 break
-
+        print self.defaultRow, self.foldingRow, self.typeRow, self.nameRow, self.renameRow
         for row in range(self.sh.nrows):
             if self.sh.cell(row, 0).ctype == XL_CELL_EMPTY:
                 self.dataEndRow = row
@@ -103,8 +117,9 @@ class Sheet:
         self.foldingRow = 1;
         self.typeRow = 2;
         self.nameRow = 3;
-        self.dataStartRow = 4;
-        self.dataEndRow = self.python_obj.keys().__len__();
+        self.renameRow = 4;
+        self.dataStartRow = 5;
+        self.dataEndRow = self.python_obj.keys().__len__() + self.dataStartRow;
 
 
     def __generateCol(self):
@@ -157,10 +172,12 @@ class Sheet:
                 elif (isinstance(v, list)):
                     for value in v:
                         if(isinstance(value, dict)):
-                            field.type = type_mapping_dict.get(type(v[keyNameSet[col - 1]]), "s");
-                            field.name = keyNameSet[col - 1];
-                            field.default = default_mapping_dict.get(type(v[keyNameSet[col - 1]]), None);
-            
+                            if(value.has_key(keyNameSet[col - 1])):
+                                field.type = type_mapping_dict.get(type(value[keyNameSet[col - 1]]), "s");
+                                field.name = keyNameSet[col - 1];
+                                field.default = default_mapping_dict.get(type(value[keyNameSet[col - 1]]), None);
+                                break
+                
         
     #解析字段属性
     def __parseField(self):
@@ -297,44 +314,61 @@ class Sheet:
 
     def __convertExcel(self):
 
-
+        config_list = []
         if(isinstance(self.sh, xlwt.Worksheet)):
-
             python_keys = self.python_obj.keys()
             for row in range(0, self.dataEndRow):
                 for col in range(0, self.dataEndCol):
+                    config_dict = {}
                     field = self.fieldList[col]
                     if row == self.defaultRow:
-                        if(col == 0):
-                            self.sh.write(row, col, "__default__")
+                        value = field.default
+                        if(value == None):
+                            value = "null"
+                        if(self.conver_mode == "config") and col != 0:
+                            config_dict["__default__"] = value
                         else:
-                            value = field.default
-                            if(value == None):
-                                value = "null"
-                            self.sh.write(row, col, value);
+                            if(col == 0):
+                                self.sh.write(row, col, "__default__")
+                            else:
+                                self.sh.write(row, col, value);
                         continue
                     elif row == self.foldingRow:
-                        if(col == 0):
-                            self.sh.write(row, col, "__folding__")
+                        if(self.conver_mode == "config") and col != 0:
+                            config_dict["__folding__"] = ""
                         else:
-                            self.sh.write(row, col, "");
+                            if(col == 0):
+                                self.sh.write(row, col, "__folding__")
+                            else:
+                                self.sh.write(row, col, "");
                         continue;
                     elif row == self.typeRow:
-                        if col == 0:
-                            self.sh.write(row, col, "__type__");
+                        if(self.conver_mode == "config") and col != 0:
+                            config_dict["__type__"] = field.type
                         else:
-                            self.sh.write(row, col, field.type);
+                            if col == 0:
+                                self.sh.write(row, col, "__type__");
+                            else:
+                                self.sh.write(row, col, field.type);
                         continue
                     elif row == self.nameRow:
-                        if col == 0:
-                            self.sh.write(row, col, "__name__")
+                        if(self.conver_mode == "config") and col != 0:
+                            config_dict["__name__"] = field.name
                         else:
-                            self.sh.write(row, col, field.name)
+                            if col == 0:
+                                self.sh.write(row, col, "__name__")
+                            else:
+                                self.sh.write(row, col, field.name)
+                    elif row == self.renameRow:
+                        if(self.conver_mode == "config") and col != 0:
+                            config_dict["__rename__"] = field.name
+                        else:
+                            if col == 0:
+                                self.sh.write(row, col, "__rename__")
+                            else:
+                                self.sh.write(row, col, field.name)
                     else:
-                       
-        
-        
-                            
+                        
                         rowName = python_keys[row - self.dataStartRow]
                         cellData = self.python_obj[rowName]
                         if(self.python_obj.keys().__len__() == 0 
@@ -383,8 +417,10 @@ class Sheet:
                                         break
                             if(bFind == False):
                                 self.sh.write(row, col, field.default);
-                    
-                    
+                    if(config_list.__len__() < self.dataEndCol):
+                        config_list.append(config_dict);
+        if(self.conver_mode == "config"):
+            self.__saveConfig(config_list);
                     
 
     #解析自身数据为python，并折叠。不包括引用数据。
