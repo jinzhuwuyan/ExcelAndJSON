@@ -19,7 +19,7 @@ def singlebook():
         elif op == "-o":
             output_path = value
         elif op == "-h":
-            #TODO 写说明文字
+            #TODO 写说明文�?
             # usage()
             sys.exit()
 
@@ -32,9 +32,9 @@ def singlebook():
     print file_path
     SheetManager.addWorkBook(file_path)
     sheetNameList = SheetManager.getSheetNameList()
-
+    print sheetNameList
     for sheet_name in sheetNameList:
-        #单表模式下，被引用的表不会输出
+        #单表模式下，被引用的表不会输�?
         if SheetManager.isReferencedSheet(sheet_name):
             continue
 
@@ -54,7 +54,7 @@ def mainbook():
         elif op == "-o":
             output_path = value
         elif op == "-h":
-            #TODO 写说明文字
+            #TODO 写说明文�?
             # usage()
             sys.exit()
 
@@ -97,7 +97,7 @@ def mainbook():
     #输出所有表#
     for sheet in sheetList:
 
-        #表改名处理
+        #表改名处�?
         if '->' in sheet[0]:
             sheet_name = sheet[0].split('->')[0]
             sheet_output_name = sheet[0].split('->')[1]

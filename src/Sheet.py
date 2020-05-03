@@ -5,27 +5,35 @@ __email__ = 'gdgoldlion@gmail.com'
 
 import sys
 import xlrd
-import json
+import simplejson as json
 import math
 import xlwt
 
 from xlrd import XL_CELL_EMPTY, XL_CELL_TEXT, XL_CELL_NUMBER, XL_CELL_DATE, XL_CELL_BOOLEAN, XL_CELL_ERROR, \
     XL_CELL_BLANK
 
-
+import decimal
 import SheetManager
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+class DecimalEncoderNew(json.JSONEncoder):
+    def encode(self, obj):
+        
+        if isinstance(obj, decimal.Decimal):
+            print obj
+            return '{'+obj.normalize()+':f}' # using normalize() gets rid of trailing 0s, using ':f' prevents scientific notation
+        return super(DecimalEncoderNew, self).encode(obj)
+
 class Field:
     def __init__(self):
-        #字段名
+        #字段�??
         self.name = None
         #字段类型
         self.type = None
-        #缺省值
+        #缺省�??
         self.default = None
-        #折叠属性
+        #折叠属�?
         self.folding = None
 
     def __str__(self):
@@ -35,20 +43,20 @@ class Sheet:
     def __init__(self, sh, json_Data = None):
         self.sh = sh
         self.name = sh.name
-        #是否完全初始化完毕（最后一个步骤是插入表的引用）
+        #是否完全初始化完毕（最后一个步骤是插入表的引用�??
         self.inited = False
-        #字段属性列表
+        #字段属性列�??
         self.fieldList = []
-        #引用的其他sheet名
+        #引用的其他sheet�??
         self.referenceSheets = set()
-        #解析的数据
+        #解析的数�??
         self.python_obj = {}
         self.python_list = []
 
         self.conver_mode = "default"
 
         if(json_Data != None):
-            py_data = json.loads(json_Data)
+            py_data = json.loads(str(json_Data), parse_float=decimal.Decimal);
             if(isinstance(py_data, dict)):
                 self.python_obj = py_data
             elif(isinstance(py_data, list)):
@@ -82,7 +90,7 @@ class Sheet:
         self.__generateField();
         self.__convertExcel();
 
-    #查找数据起始行数，格式行，缺省值行，类型行，数据终止行数
+    #查找数据起始行数，格式行，缺省值行，类型行，数据终止行�??
     def __findRow(self):
         self.defaultRow = -1
         self.foldingRow = -1
@@ -141,7 +149,7 @@ class Sheet:
 
     #查找数据终止列数
     def __findCol(self):
-        #遍历查找，如果在excel中存在多余的注释，列数为第一个空字符串出现的单元格下标#
+        #遍历查找，如果在excel中存在多余的注释，列数为第一个空字符串出现的单元格下�??#
         for col in range(self.sh.ncols):
             if self.sh.cell(self.nameRow, col).ctype == XL_CELL_EMPTY:
                 self.dataEndCol = col
@@ -153,7 +161,7 @@ class Sheet:
 
     def __generateField(self):
         keyNameSet = list(self.keyNameSet)
-        type_mapping_dict = {int: 'i', float: 'f', dict: 'd', list: 'l', str: 's', bool: 'b'}
+        type_mapping_dict = {int: 'i', float: 'f', dict: 'd', list: 'l', str: 's', bool: 'b', decimal.Decimal: "f"}
         default_mapping_dict = {int: 0, float: 0, dict: None, list: None, str: '', bool: False}
         for col in range(self.dataEndCol):
             field = Field()
@@ -179,7 +187,7 @@ class Sheet:
                                 break
                 
         
-    #解析字段属性
+    #解析字段属�?
     def __parseField(self):
 
         for col in range(self.dataEndCol):
@@ -192,7 +200,7 @@ class Sheet:
             #字段名字
             field.name = self.sh.cell(self.nameRow, col).value
 
-            #字段缺省值
+            #字段缺省�??
             if self.defaultRow == -1:
                 field.default = None
             else:
@@ -200,15 +208,17 @@ class Sheet:
                 ctype = self.sh.cell(self.defaultRow, col).ctype
                 value = self.sh.cell(self.defaultRow, col).value
 
-                if col == 0:  #第一位缺省值，占位符
+                if col == 0:  #第一位缺省值，占位�??
                     field.default = None
-                elif ctype == XL_CELL_EMPTY:  #空白格
+                elif ctype == XL_CELL_EMPTY:  #空白�??
                     field.default = None
-                elif value == 'null':  #null格
+                elif value == 'null':  #null�??
                     field.default = None
                 elif type == 'i':
                     field.default = int(value)
                 elif type == 'f':
+                    field.default = value
+                elif type == 'df':
                     field.default = value
                 elif type == 's':
                     field.default = value
@@ -254,7 +264,8 @@ class Sheet:
                 elif value.isdigit():
                     str_list[idx] = int(value)
                 else:
-                    str_list[idx] = str(value)
+                    tmpStr = str(value);
+                    str_list[idx] = tmpStr.replace(",", "\,");
         else:
             strtype = typeStr[1]
             str_list = covertstr.split(',')
@@ -264,7 +275,8 @@ class Sheet:
                 elif strtype == 'i':
                     str_list[i] = int(str_list[i])
                 elif strtype == 'f':
-                    str_list[i] = float(str_list[i])
+                    str_list[i] = decimal.Decimal(str_list[i])
+
 
         return str_list
 
@@ -288,16 +300,16 @@ class Sheet:
 
     def log(self):
         print '缺省值行', self.defaultRow
-        print '折叠行', self.foldingRow
-        print '类型行', self.typeRow
+        print '折叠�??', self.foldingRow
+        print '类型�??', self.typeRow
         print '字段名行', self.nameRow
-        print '数据起始行', self.dataStartRow
-        print '数据终止行', self.dataEndRow
-        print '数据终止列', self.dataEndCol
-        print '字段属性'
+        print '数据起始�??', self.dataStartRow
+        print '数据终止�??', self.dataEndRow
+        print '数据终止�??', self.dataEndCol
+        print '字段属�?'
         for field in self.fieldList:
             print field
-        print '引用表', self.referenceSheets
+        print '引用�??', self.referenceSheets
 
     #获得当前行的recordId
     def __getRecordId(self, row):
@@ -308,7 +320,7 @@ class Sheet:
         elif ctype == XL_CELL_NUMBER:
             #处理为整数做主键
             recordId = int(recordId)
-            #TODO 并不支持小数做主键
+            #TODO 并不支持小数做主�??
 
         return recordId
 
@@ -390,6 +402,10 @@ class Sheet:
                                     for k, v in data.items():
                                         tmp += "%s:%s," % (k, v)
                                     data = tmp
+                                if(isinstance(data, str) and data.isdigit() == False):
+                                    data.replace(",", "\,");
+                                elif(isinstance(data, decimal.Decimal)):
+                                    data = str(data);
                                 self.sh.write(row, col, data);
                             else:
                                 self.sh.write(row, col, field.default);
@@ -401,7 +417,6 @@ class Sheet:
                                         data = cellData[field.name]
                                         tmp = ""
                                         if(isinstance(data, list)):
-
                                             try:
                                                 tmp += ",".join([str(i) for i in data])
                                                 data = tmp
@@ -412,6 +427,10 @@ class Sheet:
                                             for k, v in data.items():
                                                 tmp += "%s:%s," % (k, v)
                                             data = tmp
+                                        if(isinstance(data, str) and data.isdigit() == False):
+                                            data.replace(",", "\,");
+                                        elif(isinstance(data, decimal.Decimal)):
+                                            data = str(data);
                                         self.sh.write(row, col, data);
                                         bFind = True
                                         break
@@ -423,7 +442,7 @@ class Sheet:
             self.__saveConfig(config_list);
                     
 
-    #解析自身数据为python，并折叠。不包括引用数据。
+    #解析自身数据为python，并折叠。不包括引用数据�??
     def __convertPython(self):
         #dump数据#
         row = self.dataEndRow if self.dataStartRow != self.dataEndRow else self.dataEndListRow
@@ -440,7 +459,7 @@ class Sheet:
                 value = self.sh.cell(row, col).value
                 ctype = self.sh.cell(row, col).ctype
 
-                if ctype == XL_CELL_EMPTY:  #如果是空的，就填入缺省值
+                if ctype == XL_CELL_EMPTY:  #如果是空的，就填入缺省�?
                     if(field.default != None):
                         record[fieldName] = field.default
                 elif value == 'null': #null为保留字
@@ -450,21 +469,25 @@ class Sheet:
                     #如果没有类型字段，就自动判断类型，只支持i、f、s
                     if fieldType == '' or fieldType == None:
                         fieldType = self.__autoDecideType(value)
-
-                    if fieldType == 'i':
-                        record[fieldName] = int(value)
-                    elif fieldType == 'f':
-                        record[fieldName] = value
-                    elif fieldType == 's':
-                        record[fieldName] = value
-                    elif fieldType == 'b':
-                        record[fieldName] = bool(value)
-                    elif fieldType == 'as' or fieldType == 'ai' or fieldType == 'af' or fieldType == "l":
-                        record[fieldName] = self.__convertStrToList(value, fieldType)
-                    elif fieldType == 'd':
-                        record[fieldName] = self.__convertStrToDict(value)
-                    elif fieldType == 'r':  #引用，保存引用字符串，以备插入引用表
-                        record[fieldName] = value
+                    try:
+                        if fieldType == 'i':
+                            record[fieldName] = int(value)
+                        elif fieldType == 'f':
+                            record[fieldName] = decimal.Decimal(value);
+                        elif fieldType == 's':
+                            record[fieldName] = value
+                        elif fieldType == 'b':
+                            record[fieldName] = bool(value)
+                        elif fieldType == 'as' or fieldType == 'ai' or fieldType == 'af' or fieldType == "l":
+                            record[fieldName] = self.__convertStrToList(value, fieldType)
+                        elif fieldType == 'd':
+                            record[fieldName] = self.__convertStrToDict(value)
+                        elif fieldType == 'r':  #引用，保存引用字符串，以备插入引用表
+                            record[fieldName] = value
+                    except:
+                        import traceback
+                        print traceback.format_exc()
+                        continue
             self.python_list.append(record)
 
     def __autoDecideType(self,value):
@@ -491,17 +514,17 @@ class Sheet:
                     foldingType = "brace"
                 elif folding[0] == ']':
                     foldingType = "bracket"
-                else:  #未找到右括号，进入下一轮循环
+                else:  #未找到右括号，进入下一轮循�??
                     continue
 
-                #记录折叠终止格
+                #记录折叠终止�??
                 endIndex = i
 
                 #清除括号
                 field.folding = folding[1:]
                 break
 
-            #未找到折叠字段类型，就跳出
+            #未找到折叠字段类型，就跳�??
             if foldingType == None:
                 break
 
@@ -521,25 +544,25 @@ class Sheet:
                 if bracketIndex == -1:
                     continue
 
-                #记录折叠起始格
+                #记录折叠起始�??
                 startIndex = i
 
-                #取折叠后的名字
+                #取折叠后的名�??
                 foldingName = folding[bracketIndex + 1:]
 
-                #清除括号和名字
+                #清除括号和名�??
                 field.folding = folding[:bracketIndex]
                 break
 
             #折叠数据#
             for row in range(self.dataStartRow, self.dataEndRow):
-                #取记录
+                #取记�??
                 recordId = self.__getRecordId(row)
              
                 record = self.python_obj[recordId]
                 
 
-                #生成新对象
+                #生成新对�??
                 if foldingType == "brace":
                     foldingObj = {}
                 elif foldingType == "bracket":
@@ -556,17 +579,17 @@ class Sheet:
 
                     del record[field.name]
 
-                #挂接新对象
+                #挂接新对�??
                 record[foldingName] = foldingObj
 
             #折叠字段#
-            #需要清除的字段索引表
+            #需要清除的字段索引�??
             delFieldList = []
             for col in range(startIndex + 1, endIndex + 1):
                 field = self.fieldList[col]
                 delFieldList.append(field)
 
-            #如果最后一格有内容，则复制给合并后的格子
+            #如果最后一格有内容，则复制给合并后的格�??
             if field.folding != None or field.folding != '':
                 folding = field.folding
             else:
@@ -579,7 +602,7 @@ class Sheet:
             #刷新折叠后的字段
             field = self.fieldList[startIndex]
             field.name = foldingName
-            field.type = 'd'  #折叠后变为字典类型
+            field.type = 'd'  #折叠后变为字典类�??
             if folding != None:
                 field.folding = folding
 
@@ -587,12 +610,12 @@ class Sheet:
             self.dataEndCol -= endIndex - startIndex
 
     def toPython(self, sheet_output_field=[]):
-        #插入引用表
+        #插入引用�??
         if not self.inited:
             self.__mergePython()
             self.inited = True
         
-        #选择性输出
+        #选择性输�??
         if sheet_output_field == []:
             if(filter(lambda x : x != "", self.python_obj.keys()).__len__() > 0):
                 return self.python_obj
@@ -614,7 +637,7 @@ class Sheet:
 
             return new_python_obj
 
-    #合并引用表到当前表
+    #合并引用表到当前�??
     def __mergePython(self):
         for row in range(self.dataStartRow, self.dataEndRow):
 
@@ -633,7 +656,7 @@ class Sheet:
 
                     if reference_recordId.isdigit():
                         reference_recordId = int(reference_recordId)
-                    #TODO 并不支持小数做主键
+                    #TODO 并不支持小数做主�??
 
                     referenceSheet = SheetManager.getSheet(reference_sheetName)
                     reference_python_obj = referenceSheet.toPython()
@@ -641,7 +664,7 @@ class Sheet:
                     record[fieldName] = reference_python_obj[reference_recordId]
 
     def toJSON(self,sheet_output_field=[]):
-        json_obj = json.dumps(self.toPython(sheet_output_field), sort_keys=True, indent=2, ensure_ascii=False)
+        json_obj = json.dumps(self.toPython(sheet_output_field), sort_keys=True, indent=4, ensure_ascii=False);
         return json_obj
 
 def openSheet(sh):

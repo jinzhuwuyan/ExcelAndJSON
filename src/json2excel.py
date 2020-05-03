@@ -3,6 +3,9 @@ import json
 import SheetManager
 import os
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 def saveJson(jsonPath, exportPath = ""):
 	SheetManager.clearJson()
 	SheetManager.addJson(jsonPath)
@@ -18,8 +21,8 @@ def saveJson(jsonPath, exportPath = ""):
 	return
 
 if __name__ == "__main__":
+	
 	jsonPath, exportPath =  sys.argv[1], sys.argv[2] 
-
 	if(jsonPath[-5:] == ".json"):
 		saveJson(os.path.abspath(jsonPath), exportPath)
 	elif(os.path.exists(jsonPath)):
